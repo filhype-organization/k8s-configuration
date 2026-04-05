@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(kubectl get nodes:*)",
+      "Bash(kubectl get pods:*)",
+      "Bash(kubectl cluster-info:*)",
+      "Bash(systemctl is-enabled:*)",
+      "Skill(schedule)",
+      "Skill(update-config)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/k8s-healthcheck.sh",
+            "statusMessage": "Verification de l'etat du cluster k8s...",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
