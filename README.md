@@ -17,6 +17,7 @@ Cluster K8s single-node sur bare metal, extensible avec des Jetson Nano (ARM64).
 4. [Initialisation du cluster](docs/04-cluster-init.md)
 5. [Installation du CNI Flannel](docs/05-flannel.md)
 6. [Post-install et vérifications](docs/06-post-install.md)
+7. [Dépannage](docs/07-troubleshooting.md)
 
 ## Noeuds
 
