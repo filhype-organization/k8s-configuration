@@ -35,11 +35,24 @@ Deux Jetson Nano (ARM64) à ajouter comme worker nodes.
 k8s/
 ├── CLAUDE.md          # Ce fichier
 ├── README.md          # Vue d'ensemble et liens
-└── docs/
-    ├── 01-prerequisites.md
-    ├── 02-containerd.md
-    ├── 03-kubeadm-install.md
-    ├── 04-cluster-init.md
-    ├── 05-flannel.md
-    └── 06-post-install.md
+├── doc/
+│   └── docs/
+│       ├── 01-prerequisites.md
+│       ├── 02-containerd.md
+│       ├── 03-kubeadm-install.md
+│       ├── 04-cluster-init.md
+│       ├── 05-flannel.md
+│       ├── 06-post-install.md
+│       ├── 07-troubleshooting.md
+│       └── 08-argocd.md      # ArgoCD via OLM
+└── argocd/
+    ├── 00-namespace.yaml      # Namespace argocd
+    ├── 01-subscription.yaml   # Subscription OLM (argocd-operator)
+    └── 02-argocd-instance.yaml # CR ArgoCD (v1beta1)
 ```
+
+## Contrainte multi-arch
+
+Les workers Jetson Nano (ARM64) ne peuvent pas exécuter les images
+`argocd-operator` ni ArgoCD (amd64 uniquement). Tout déploiement applicatif
+non-ARM64 doit inclure un `nodeSelector: kubernetes.io/arch: amd64`.
