@@ -1,0 +1,17 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: iac-k8s-configuration
+  namespace: flux-system
+spec:
+  interval: 1m
+  url: https://github.com/filhype-organization/k8s-configuration
+  ref:
+    branch: main
+  # Pour un repo privé, décommenter et créer le Secret :
+  # kubectl create secret generic iac-k8s-configuration-auth \
+  #   -n flux-system \
+  #   --from-literal=username=<github-user> \
+  #   --from-literal=password=<github-pat-with-contents-read>
+  # secretRef:
+  #   name: iac-k8s-configuration-auth

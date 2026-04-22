@@ -1,58 +1,45 @@
-# CLAUDE.md — k8s Infrastructure
+# CLAUDE.md — k8s-configuration
 
-## Contexte du projet
+## Contexte
 
-Cluster Kubernetes single-node (pour l'instant) hébergé sur un HP Elite 802 physique.
-Usage : projets de dev perso + Home Assistant.
+Repo de configuration du cluster Kubernetes bare-metal (HP Elite 802 + 2 Jetson Nano).
+Contient la configuration GitOps Flux et les manifestes d'infrastructure.
 
 ## Infrastructure
 
-| Élément       | Détail                                      |
-|---------------|---------------------------------------------|
-| Noeud actuel  | HP Elite 802 — Core i7, 16 Go RAM           |
-| OS            | Ubuntu Server 24.04 LTS (à jour)            |
-| Architecture  | x86_64                                      |
-| IP            | 192.168.1.23 (fixe locale)                  |
-| Runtime       | containerd                                  |
-| CNI           | Flannel (multi-arch ready)                  |
-| K8s           | Dernière version stable (1.32.x)            |
-
-## Noeuds futurs prévus
-
-Deux Jetson Nano (ARM64) à ajouter comme worker nodes.
-→ Toute configuration CNI/réseau doit rester compatible ARM64.
-
-## Conventions
-
-- La doc est en français
-- Chaque fichier de doc est préfixé par un numéro (ex: `01-`, `02-`) pour ordonner les étapes
-- Les commandes sont testées pour Ubuntu 24.04 + containerd + systemd cgroups
-- Le scheduling est activé sur le control-plane (noeud unique)
-
-## Structure du répertoire
-
-```
-k8s/
-├── CLAUDE.md          # Ce fichier
-├── README.md          # Vue d'ensemble et liens
-├── doc/
-│   └── docs/
-│       ├── 01-prerequisites.md
-│       ├── 02-containerd.md
-│       ├── 03-kubeadm-install.md
-│       ├── 04-cluster-init.md
-│       ├── 05-flannel.md
-│       ├── 06-post-install.md
-│       ├── 07-troubleshooting.md
-│       └── 08-argocd.md      # ArgoCD via OLM
-└── argocd/
-    ├── 00-namespace.yaml      # Namespace argocd
-    ├── 01-subscription.yaml   # Subscription OLM (argocd-operator)
-    └── 02-argocd-instance.yaml # CR ArgoCD (v1beta1)
-```
+| Élément            | Détail                                    |
+|--------------------|-------------------------------------------|
+| Control-plane      | HP Elite 802 — Core i7, 16 Go — x86_64   |
+| Workers            | 2× Jetson Nano — ARM64                    |
+| OS                 | Ubuntu Server 24.04 LTS (hp) / 22.04 LTS |
+| IP control-plane   | 192.168.1.23 (fixe)                       |
+| Runtime            | containerd                                |
+| CNI                | Flannel (multi-arch)                      |
+| K8s                | 1.32.x                                    |
 
 ## Contrainte multi-arch
 
-Les workers Jetson Nano (ARM64) ne peuvent pas exécuter les images
-`argocd-operator` ni ArgoCD (amd64 uniquement). Tout déploiement applicatif
-non-ARM64 doit inclure un `nodeSelector: kubernetes.io/arch: amd64`.
+Les workers Jetson Nano (ARM64) ne peuvent exécuter que des images ARM64.
+Tout déploiement non-ARM64 doit inclure `nodeSelector: kubernetes.io/arch: amd64`.
+
+## Structure du repo
+
+```
+flux/         → Ressources FluxCD (appliquer avec kubectl apply -k flux/)
+infra/        → Manifestes Kustomize : metallb, metallb-config, traefik, cloudflared
+cluster-k8s/  → Documentation d'installation pas à pas
+docs/         → Documentation opérationnelle (infra-stack.md)
+```
+
+## Repos liés
+
+| Repo                       | Rôle                                    |
+|----------------------------|-----------------------------------------|
+| `iac-chucknorris-backend`  | Manifestes K8s du backend (deploy/)     |
+| `k8s-configuration` (ce repo) | Infra cluster + bootstrap Flux       |
+
+## Conventions
+
+- Documentation en français
+- Fichiers de doc préfixés par numéro pour ordonner les étapes (ex: `01-`, `02-`)
+- Commandes testées pour Ubuntu 24.04 + containerd + systemd cgroups

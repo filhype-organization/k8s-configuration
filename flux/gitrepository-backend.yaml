@@ -1,0 +1,17 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: iac-chucknorris-backend
+  namespace: flux-system
+spec:
+  interval: 1m
+  url: https://github.com/filhype-organization/iac-chucknorris-backend
+  ref:
+    branch: main
+  # Pour un repo privé, décommenter et créer le Secret :
+  # kubectl create secret generic iac-chucknorris-backend-auth \
+  #   -n flux-system \
+  #   --from-literal=username=<github-user> \
+  #   --from-literal=password=<github-pat-with-contents-read>
+  # secretRef:
+  #   name: iac-chucknorris-backend-auth
