@@ -4,7 +4,6 @@ metadata:
   name: timoni-runner
   namespace: timoni-system
 spec:
-  # Réconciliation toutes les 2 minutes — timoni bundle apply est idempotent.
   schedule: "*/2 * * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
@@ -14,10 +13,11 @@ spec:
       template:
         spec:
           serviceAccountName: timoni-runner
-          # nodeSelector ARM64 non nécessaire : timoni ne fait que des appels API Kubernetes.
+          nodeSelector:
+            kubernetes.io/arch: amd64
           containers:
             - name: timoni
-              image: ghcr.io/stefanprodan/timoni:latest
+              image: leeson77/timoni-runner:latest
               imagePullPolicy: Always
               command:
                 - timoni
@@ -28,6 +28,8 @@ spec:
               volumeMounts:
                 - name: bundle
                   mountPath: /bundle
+                - name: tmp
+                  mountPath: /tmp
               resources:
                 requests:
                   cpu: 50m
@@ -47,4 +49,6 @@ spec:
             - name: bundle
               configMap:
                 name: timoni-bundle
+            - name: tmp
+              emptyDir: {}
           restartPolicy: OnFailure
