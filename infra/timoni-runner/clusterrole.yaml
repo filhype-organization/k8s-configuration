@@ -4,7 +4,7 @@ metadata:
   name: timoni-runner
 rules:
   - apiGroups: [""]
-    resources: ["namespaces", "configmaps", "services", "serviceaccounts"]
+    resources: ["namespaces", "configmaps", "services", "serviceaccounts", "secrets"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: ["apps"]
     resources: ["deployments"]
