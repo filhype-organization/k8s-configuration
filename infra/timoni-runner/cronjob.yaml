@@ -25,6 +25,9 @@ spec:
                 - apply
                 - --file
                 - /bundle/bundle.cue
+              env:
+                - name: HOME
+                  value: /tmp
               volumeMounts:
                 - name: bundle
                   mountPath: /bundle
