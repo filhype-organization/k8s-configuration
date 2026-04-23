@@ -23,6 +23,7 @@ spec:
                 - timoni
                 - bundle
                 - apply
+                - --wait=false
                 - --file
                 - /bundle/bundle.cue
               env:
