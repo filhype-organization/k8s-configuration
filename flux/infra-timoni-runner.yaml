@@ -1,16 +1,16 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: chuck-norris-backend
+  name: infra-timoni-runner
   namespace: flux-system
 spec:
-  interval: 2m
-  path: ./bundle
+  interval: 10m
+  path: ./infra/timoni-runner
   prune: true
   wait: true
   timeout: 3m
   sourceRef:
     kind: GitRepository
-    name: iac-chucknorris-backend
+    name: iac-k8s-configuration
   dependsOn:
-    - name: infra-timoni-runner
+    - name: infra-traefik

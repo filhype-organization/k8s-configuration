@@ -7,4 +7,5 @@ resources:
   - infra-metallb-config.yaml
   - infra-traefik.yaml
   - infra-cloudflared.yaml
+  - infra-timoni-runner.yaml
   - chuck-norris-backend.yaml

@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: timoni-runner
+  namespace: timoni-system
+spec:
+  # Réconciliation toutes les 2 minutes — timoni bundle apply est idempotent.
+  schedule: "*/2 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: timoni-runner
+          # nodeSelector ARM64 non nécessaire : timoni ne fait que des appels API Kubernetes.
+          containers:
+            - name: timoni
+              image: ghcr.io/stefanprodan/timoni:latest
+              imagePullPolicy: Always
+              command:
+                - timoni
+                - bundle
+                - apply
+                - --file
+                - /bundle/bundle.cue
+              volumeMounts:
+                - name: bundle
+                  mountPath: /bundle
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 200m
+                  memory: 128Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 65532
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+          volumes:
+            - name: bundle
+              configMap:
+                name: timoni-bundle
+          restartPolicy: OnFailure
