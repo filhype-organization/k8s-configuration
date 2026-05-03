@@ -2,10 +2,13 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - gitrepository-backend.yaml
+  - gitrepository-frontend.yaml
   - gitrepository-k8s-config.yaml
   - infra-metallb.yaml
   - infra-metallb-config.yaml
   - infra-traefik.yaml
   - infra-cloudflared.yaml
   - infra-timoni-runner.yaml
+  - infra-timoni-runner-frontend.yaml
   - chuck-norris-backend.yaml
+  - chuck-norris-frontend.yaml
