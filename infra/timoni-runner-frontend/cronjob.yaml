@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: timoni-runner-frontend
+  namespace: timoni-system
+spec:
+  schedule: "*/2 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: timoni-runner
+          nodeSelector:
+            kubernetes.io/arch: amd64
+          containers:
+            - name: timoni
+              image: leeson77/timoni-runner:latest
+              imagePullPolicy: Always
+              command:
+                - timoni
+                - bundle
+                - apply
+                - --wait=false
+                - --file
+                - /bundle/bundle.cue
+              env:
+                - name: HOME
+                  value: /tmp
+              volumeMounts:
+                - name: bundle
+                  mountPath: /bundle
+                - name: tmp
+                  mountPath: /tmp
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 200m
+                  memory: 128Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 65532
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+          volumes:
+            - name: bundle
+              configMap:
+                name: timoni-bundle-frontend
+            - name: tmp
+              emptyDir: {}
+          restartPolicy: OnFailure
